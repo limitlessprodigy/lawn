@@ -8,7 +8,7 @@ require_once('php-mailer/PHPMailerAutoload.php');
 $mail = new PHPMailer();
 
 // Enter your email address. If you need multiple email recipes simply add a comma: email@domain.com, email2@domain.com
-$to = "";
+$to = "prodigygit@yahoo.com";
 
 
 // Form Fields
@@ -24,34 +24,34 @@ $recaptcha = $_POST['g-recaptcha-response'];
 
 
 if( $_SERVER['REQUEST_METHOD'] == 'POST') {
-	
-    
+
+
  if($email != '') {
-            
-                //If you don't receive the email, enable and configure these parameters below: 
-     
+
+                //If you don't receive the email, enable and configure these parameters below:
+
                 //$mail->isSMTP();                                      // Set mailer to use SMTP
                 //$mail->Host = 'mail.yourserver.com';                  // Specify main and backup SMTP servers, example: smtp1.example.com;smtp2.example.com
                 //$mail->SMTPAuth = true;                               // Enable SMTP authentication
                 //$mail->Username = 'SMTP username';                    // SMTP username
                 //$mail->Password = 'SMTP password';                    // SMTP password
                 //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
-                //$mail->Port = 587;                                    // TCP port to connect to 
-     
+                //$mail->Port = 587;                                    // TCP port to connect to
+
      	        $mail->IsHTML(true);                                    // Set email format to HTML
                 $mail->CharSet = 'UTF-8';
-     
+
                 $mail->From = $email;
                 $mail->FromName = $name;
-     
+
                 $email_addresses = explode(',', $to);
                 foreach ($email_addresses as $email_address) {
                      $mail->AddAddress(trim($email_address));
-                }	
-							  
+                }
+
                 $mail->AddReplyTo($email, $name);
                 $mail->Subject = $subject;
-          
+
                 $name = isset($name) ? "Name: $name<br><br>" : '';
                 $email = isset($email) ? "Email: $email<br><br>" : '';
                 $phone = isset($phone) ? "Phone: $phone<br><br>" : '';
@@ -60,8 +60,8 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST') {
                 $message = isset($message) ? "Message: $message<br><br>" : '';
 
                 $mail->Body = $name . $email . $phone . $company . $service . $message . '<br><br><br>This email was sent from: ' . $_SERVER['HTTP_REFERER'];
-     
-     
+
+
             if(isset($recaptcha) && $recaptcha == '') {
              $recaptcha_response=json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=&response=".$recaptcha."&remoteip=".$_SERVER['REMOTE_ADDR']), true);
                         if($recaptcha_response['success'] == false)
@@ -71,18 +71,18 @@ if( $_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			}else {
                 if(!$mail->Send()) {
-                   $response = array ('response'=>'error', 'message'=> $mail->ErrorInfo);  
+                   $response = array ('response'=>'error', 'message'=> $mail->ErrorInfo);
 
                 }else {
-                   $response = array ('response'=>'success');  
+                   $response = array ('response'=>'success');
                 }
-            }        
+            }
      echo json_encode($response);
 
 } else {
-	$response = array ('response'=>'error');     
+	$response = array ('response'=>'error');
 	echo json_encode($response);
 }
-    
+
 }
 ?>
